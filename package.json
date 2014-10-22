@@ -1,0 +1,22 @@
+{
+  "name": "cookie-auth",
+  "version": "1.0.0",
+  "description": "a simple authentication handler that uses cookies",
+  "main": "auth.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "authentication",
+    "http",
+    "cookies",
+    "sessions"
+  ],
+  "author": "karissa",
+  "license": "BSD",
+  "dependencies": {
+    "basic": "0.0.3",
+    "cookie-cutter": "^0.1.1",
+    "debug": "^2.1.0"
+  }
+}
