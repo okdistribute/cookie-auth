@@ -19,13 +19,13 @@ auth = Auth({
 
 router.addRoute('/login', function (req, res) {
   var self = this
-  this.auth.handle(req, res, function(err, session) {
+  auth.handle(req, res, function(err, session) {
     if (err) return self.auth.error(req, res)
     self.json(res, {session: session})
   })
 });
 
 router.addRoute('/logout', function (req, res) {
-  return this.auth.error(req, res)
+  return auth.error(req, res)
 });
 ```
