@@ -1,7 +1,7 @@
 cookie-auth
 ===========
 
-This module does one thing very simply, and that's let your node process authenticate using cookies. Right now, it only handles one user as the master admin login. It could be easily extended to handle multiple users, though.
+This module does one thing very simply, and that's let your node process authenticate using cookies via basic authentication.
 
 ```npm install cookie-auth```
 

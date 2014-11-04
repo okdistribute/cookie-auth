@@ -11,8 +11,7 @@ function Auth(opts) {
   if (!(this instanceof Auth)) return new Auth(opts)
 
   // this sets the admin user who will get access.
-  // TODO: allow multiple users, with low overhead.
-  // This can be as simple as a json config file. (karissa)
+  // TODO: allow multiple users.
   this.user = opts.adminUser
   this.pass = opts.adminPass
 
