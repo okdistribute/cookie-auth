@@ -1,7 +1,7 @@
 {
   "name": "cookie-auth",
-  "version": "0.0.1",
-  "description": "A simple authentication handler that uses cookies. Great for cli or low overhead rest clients.",
+  "version": "1.0.0",
+  "description": "A simple 1-user authentication handler that uses cookies. Great for cli or low overhead rest clients.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

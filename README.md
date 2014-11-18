@@ -1,7 +1,7 @@
 cookie-auth
 ===========
 
-This module does one thing very simply, and that's let your node process authenticate using cookies via basic authentication.
+This module does one thing very simply, and that's let your node process authenticate using cookies via basic authentication. Right now, it is optimized for one user use cases. Great for simple CLI/REST clients that don't want or need the full capacity of a user management system.
 
 ```npm install cookie-auth```
 
