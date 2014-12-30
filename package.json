@@ -1,15 +1,16 @@
 {
   "name": "cookie-auth",
   "version": "1.0.0",
-  "description": "A simple 1-user authentication handler that uses cookies. Great for cli or low overhead rest clients.",
+  "description": "A simple authentication handler that uses cookies. Great for cli or rest clients.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test.js"
   },
   "keywords": [
     "authentication",
     "http",
     "cookies",
+    "cookie",
     "sessions"
   ],
   "repository": {
@@ -22,8 +23,15 @@
     "url": "https://github.com/karissa/cookie-auth/issues"
   },
   "dependencies": {
-    "basic": "0.0.3",
     "cookie-cutter": "^0.1.1",
-    "debug": "^2.1.0"
+    "debug": "^2.1.0",
+    "memdb": "^0.2.0"
+  },
+  "devDependencies": {
+    "basic": "0.0.3",
+    "connections": "^1.0.0",
+    "request": "^2.51.0",
+    "routes-router": "^4.1.1",
+    "tape": "^3.0.3"
   }
 }

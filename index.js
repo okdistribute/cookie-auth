@@ -1,61 +1,65 @@
-var basic = require('basic')
+var memdb = require('memdb')
 var debug = require('debug')('auth')
 var cookie = require('./cookie.js')
 
 module.exports = Auth
 
-function noAuth(req, res, cb) { setImmediate(cb) }
-
 function Auth(opts) {
   var self = this
   if (!(this instanceof Auth)) return new Auth(opts)
-
-  // this sets the admin user who will get access.
-  // TODO: allow multiple users.
-  this.user = opts.adminUser
-  this.pass = opts.adminPass
-
-  this.basic = basic(function (user, pass, callback) {
-    if (user === self.user && pass === self.pass) return callback(null)
-    callback(new Error("Access Denied"))
-  })
+  if (!opts) opts = {}
   this.cookie = cookie(opts)
-  this.sessions = {}
+  this.sessions = opts.sessions || memdb()
+  this.authenticator = opts.authenticator
+  if (!this.authenticator) throw new Error('must specify an authenticator')
 }
 
 Auth.prototype.handle = function(req, res, cb) {
-  if (!this.user || !this.pass) return noAuth(req, res, cb)
-
   var self = this
-  var session = this.cookie.get(req)
-
+  var sessionKey = this.cookie.get(req)
+  
   // user is already logged in
-  if (this.sessions.hasOwnProperty(session)) {
-    debug('session OK', session)
-    return setImmediate(function() { cb(null, session) })
-  }
-
-  this.basic(req, res, function(err) {
-    // user is not authorized
-    if (err) {
-      debug('not authorized', {header: req.headers.Authorization || req.headers.authorization, session: session})
-      delete self.sessions[session]
-      return cb(err)
+  this.sessions.get(sessionKey, function(err, expireDate) {
+    if (expireDate) {
+      var data = {session: sessionKey, expires: expireDate}
+      debug('session OK', data)
+      return cb(null, data)
     }
+    
+    self.authenticator(req, res, function(err) {
+      // user is not authorized
+      if (err) {
+        debug('not authorized', err)
+        self.sessions.del(sessionKey, function(delErr) {
+          cb(err)
+        })
+        return
+      }
 
-    // authenticate user
-    var newSession = self.cookie.create(res)
-    self.sessions[newSession] = new Date()
-    debug('new session', newSession)
-    cb(null, newSession)
+      // authenticate user
+      var newSession = self.cookie.create(res)
+      var expires = new Date().toISOString()
+      self.sessions.put(newSession, expires, function(err) {
+        debug('new session', newSession)
+        cb(err, {session: newSession, expires: expires})
+      })
+    })
   })
+  
 }
 
-Auth.prototype.error = function(req, res) {
+Auth.prototype.logout = function(req, res) {
+  var self = this
   var session = this.cookie.get(req)
-  if (session) delete this.sessions[session]
-  this.cookie.destroy(res)
-  res.statusCode = 401
-  res.setHeader('content-type', 'application/json')
-  res.end(JSON.stringify({error: "Unauthorized", loggedOut: true}) + '\n')
+  if (session) {
+    this.sessions.del(session, logout)
+  } else {
+    logout()
+  }
+  function logout() {
+    res.statusCode = 401
+    res.setHeader('content-type', 'application/json')
+    self.cookie.destroy(res)
+    res.end(JSON.stringify({error: "Unauthorized", loggedOut: true}) + '\n')
+  }
 }

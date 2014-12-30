@@ -6,7 +6,7 @@ module.exports = Cookie
 function Cookie(options) {
   if (!(this instanceof Cookie)) return new Cookie(options)
   this.options = options
-  this.name = options.name
+  this.name = options.name || 'session'
 }
 
 Cookie.prototype.create = function(res) {
