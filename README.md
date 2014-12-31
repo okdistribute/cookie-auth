@@ -21,7 +21,7 @@ npm install cookie-auth
 
 You **must** pass in your own 'authenticator' function that looks like this:
 
-```
+```javascript
 function authenticator(req, res, cb) {
   // do auth with req, res and call cb when done
   
