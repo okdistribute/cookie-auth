@@ -53,7 +53,7 @@ Auth.prototype.login = function(res, cb) {
   })
 }
 
-Auth.prototype.logout = function(req, res) {
+Auth.prototype.logout = function(req, res, cb) {
   var self = this
   var session = this.cookie.get(req)
   if (session) {
@@ -66,5 +66,6 @@ Auth.prototype.logout = function(req, res) {
     res.setHeader('content-type', 'application/json')
     self.cookie.destroy(res)
     res.end(JSON.stringify({error: "Unauthorized", loggedOut: true}) + '\n')
+    if (cb) setImmediate(cb)
   }
 }
