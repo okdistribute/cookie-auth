@@ -19,9 +19,9 @@ Auth.prototype.handle = function(req, res, cb) {
   var sessionKey = this.cookie.get(req)
   
   // user is already logged in
-  this.sessions.get(sessionKey, function(err, expireDate) {
-    if (expireDate) {
-      var data = {session: sessionKey, expires: expireDate}
+  this.sessions.get(sessionKey, function(err, createdAt) {
+    if (createdAt) {
+      var data = {session: sessionKey, created: createdAt}
       debug('session OK', data)
       return cb(null, data)
     }
@@ -37,15 +37,20 @@ Auth.prototype.handle = function(req, res, cb) {
       }
 
       // authenticate user
-      var newSession = self.cookie.create(res)
-      var expires = new Date().toISOString()
-      self.sessions.put(newSession, expires, function(err) {
-        debug('new session', newSession)
-        cb(err, {session: newSession, expires: expires})
-      })
+      self.login(res, cb)
     })
   })
   
+}
+
+Auth.prototype.login = function(res, cb) {
+  var self = this
+  var newSession = self.cookie.create(res)
+  var created = new Date().toISOString()
+  self.sessions.put(newSession, created, function(err) {
+    debug('new session', newSession)
+    cb(err, {session: newSession, created: created})
+  })
 }
 
 Auth.prototype.logout = function(req, res) {
