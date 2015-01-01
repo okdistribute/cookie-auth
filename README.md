@@ -44,7 +44,11 @@ creates a new session and sets a cookie on `res`, and calls `cb` when done with 
 
 ### `auth.logout(req, res, cb)`
 
-deletes the session from the session store and sets a set-cookie to delete the cookie on `res`. calls the optional `cb` when done with no arguments
+deletes the session from the session store (using `auth.delete`) and sets a set-cookie to delete the cookie on `res`. calls the optional `cb` when done with no arguments
+
+### `auth.delete(req, cb)`
+
+deletes the session from the session store calls `cb` when done with `(err)` if an error occured with the `store.del` call
 
 ### `auth.handle(req, res, cb)`
 

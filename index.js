@@ -53,14 +53,19 @@ Auth.prototype.login = function(res, cb) {
   })
 }
 
-Auth.prototype.logout = function(req, res, cb) {
-  var self = this
+Auth.prototype.delete = function(req, cb) {
   var session = this.cookie.get(req)
   if (session) {
-    this.sessions.del(session, logout)
+    this.sessions.del(session, cb)
   } else {
-    logout()
-  }
+    setImmediate(cb)
+  }  
+}
+
+
+Auth.prototype.logout = function(req, res, cb) {
+  var self = this
+  this.delete(req, logout) // ignore err
   function logout() {
     res.statusCode = 401
     res.setHeader('content-type', 'application/json')
