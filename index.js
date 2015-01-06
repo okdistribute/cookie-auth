@@ -21,21 +21,14 @@ function Auth(opts) {
 
 Auth.prototype.handle = function(req, res, cb) {
   var self = this
-  var sessionKey = this.cookie.get(req)
-  
-  // user is already logged in
-  this.sessions.get(sessionKey, function(err, createdAt) {
-    if (createdAt) {
-      var data = {session: sessionKey, created: createdAt}
-      debug('session OK', data)
-      return cb(null, data)
-    }
-    
+  self.getSession(req, function(err, session) { // ignore errors
+    if (session) return cb(null, session)
     self.authenticator(req, res, function(err) {
       // user is not authorized
       if (err) {
         debug('not authorized', err)
-        self.sessions.del(sessionKey, function(delErr) {
+        if (!session) return setImmediate(function() { cb(err) })
+        self.sessions.del(session.session, function(delErr) {
           cb(err)
         })
         return
@@ -45,7 +38,16 @@ Auth.prototype.handle = function(req, res, cb) {
       self.login(res, cb)
     })
   })
-  
+}
+
+Auth.prototype.getSession = function(req, cb) {
+  var sessionKey = this.cookie.get(req)  
+  this.sessions.get(sessionKey, function(err, createdAt) {
+    if (err) return cb(err)
+    var data = {session: sessionKey, created: createdAt}
+    debug('session OK', data)
+    return cb(null, data)
+  })
 }
 
 Auth.prototype.login = function(res, cb) {
