@@ -4,14 +4,19 @@ var cookie = require('./cookie.js')
 
 module.exports = Auth
 
+function deny(req, res, cb) {
+  setImmediate(function() {
+    cb(new Error('not authorized'))
+  })
+}
+
 function Auth(opts) {
   var self = this
   if (!(this instanceof Auth)) return new Auth(opts)
   if (!opts) opts = {}
   this.cookie = cookie(opts)
   this.sessions = opts.sessions || memdb()
-  this.authenticator = opts.authenticator
-  if (!this.authenticator) throw new Error('must specify an authenticator')
+  this.authenticator = opts.authenticator || deny
 }
 
 Auth.prototype.handle = function(req, res, cb) {
@@ -65,8 +70,8 @@ Auth.prototype.delete = function(req, cb) {
 
 Auth.prototype.logout = function(req, res, cb) {
   var self = this
-  this.delete(req, logout) // ignore err
-  function logout() {
+  this.delete(req, logout)
+  function logout() { // ignore err
     res.statusCode = 401
     res.setHeader('content-type', 'application/json')
     self.cookie.destroy(res)

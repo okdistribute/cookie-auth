@@ -6,8 +6,9 @@ var request = require('request')
 var basic = require('basic')
 var Auth = require('./')
 
-test('must pass authenticator', function(t) {
-  t.throws(Auth, /must specify an authenticator/, 'should throw')
+test('constructor works with no args', function(t) {
+  var auth = Auth()
+  t.ok(auth, 'did not throw')
   t.end()
 })
 
