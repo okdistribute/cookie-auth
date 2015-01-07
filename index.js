@@ -42,21 +42,28 @@ Auth.prototype.handle = function(req, res, cb) {
 
 Auth.prototype.getSession = function(req, cb) {
   var sessionKey = this.cookie.get(req)  
-  this.sessions.get(sessionKey, function(err, createdAt) {
+  this.sessions.get(sessionKey, function(err, data) {
     if (err) return cb(err)
-    var data = {session: sessionKey, created: createdAt}
+    var data = {session: sessionKey, created: data.created, data: data.data}
     debug('session OK', data)
     return cb(null, data)
   })
 }
 
-Auth.prototype.login = function(res, cb) {
+Auth.prototype.login = function(res, data, cb) {
   var self = this
+  if (typeof data === 'function') {
+    cb = data
+    data = undefined
+  }
   var newSession = self.cookie.create(res)
-  var created = new Date().toISOString()
-  self.sessions.put(newSession, created, function(err) {
+  var val = {
+    created: new Date().toISOString(),
+    data: data
+  }
+  self.sessions.put(newSession, val, function(err) {
     debug('new session', newSession)
-    cb(err, {session: newSession, created: created})
+    cb(err, {session: newSession, created: val.created, data: val.data})
   })
 }
 
