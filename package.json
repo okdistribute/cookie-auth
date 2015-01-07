@@ -1,6 +1,6 @@
 {
   "name": "cookie-auth",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "A simple authentication handler that uses cookies. Great for cli or rest clients.",
   "main": "index.js",
   "scripts": {
