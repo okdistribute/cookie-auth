@@ -42,11 +42,11 @@ Auth.prototype.handle = function(req, res, cb) {
 
 Auth.prototype.getSession = function(req, cb) {
   var sessionKey = this.cookie.get(req)  
-  this.sessions.get(sessionKey, function(err, data) {
+  this.sessions.get(sessionKey, {valueEncoding: 'json'}, function(err, data) {
     if (err) return cb(err)
-    var data = {session: sessionKey, created: data.created, data: data.data}
-    debug('session OK', data)
-    return cb(null, data)
+    var resp = {session: sessionKey, created: data.created, data: data.data}
+    debug('session OK', resp)
+    return cb(null, resp)
   })
 }
 
@@ -61,7 +61,7 @@ Auth.prototype.login = function(res, data, cb) {
     created: new Date().toISOString(),
     data: data
   }
-  self.sessions.put(newSession, val, function(err) {
+  self.sessions.put(newSession, val, {valueEncoding: 'json'}, function(err) {
     debug('new session', newSession)
     cb(err, {session: newSession, created: val.created, data: val.data})
   })
