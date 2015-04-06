@@ -27,11 +27,11 @@ You **must** pass in your own 'authenticator' function that looks like this:
 ```
 function authenticator(req, res, cb) {
   // do auth with req, res and call cb when done
-  
+
   doSomeAuthThing(req, res, function(err) {
     // e.g. if not authorized
     cb(err)
-  
+
     // otherwise, if authorized
     cb()
   })
@@ -80,7 +80,7 @@ var basicAuthenticator = basic(function (user, pass, callback) {
   if (user === 'test' && pass === 'pass') return callback(null)
   callback(new Error("Access Denied"))
 })
-  
+
 var auth = Auth({
   name: 'my-application',
   authenticator: basicAuthenticator
